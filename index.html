@@ -134,7 +134,8 @@
     async function updateTaskStatus(isDone, taskId) {
             const dbRef = doc(database, "tasks", taskId);
             await updateDoc(dbRef, {
-                status: isDone
+                status: isDone,
+                userEndDate: isDone ? Date.now():1
             });
         }
 
@@ -229,7 +230,7 @@
 
     function getDisplayableDateFromTimestamp(param) {
       var date = new Date(param);
-      return date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
+      return date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear();
     }
 
 

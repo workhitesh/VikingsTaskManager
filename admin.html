@@ -68,6 +68,7 @@
                     <th>Total hours</th>
                     <th>Status</th>
                     <th>Total Cost</th>
+                    <th>User End Date</th>
                   </thead>
                   <tbody>
                    
@@ -111,7 +112,6 @@
         getMyTasks();
     
         async function getMyTasks() {
-            console.log(currentUserId);
                 const qA = await getDocs(collection(database, "tasks"));
                 qA.forEach((element) => {
                     let task = new Object();
@@ -123,6 +123,7 @@
                     task.startDate = element.data().startDate;
                     task.status = element.data().status;
                     task.totalHours = element.data().totalHours;
+                    task.userEndDate = element.data().userEndDate;
                     if (element.data()["ownerId"] == currentUserId) {
                         allTasksArr.push(task);
                     }
@@ -176,8 +177,11 @@
             hourlyRate:parseInt(hrlyRate,10),
             status:status,
             totalHours:totalHours,
-            ownerId:""
+            ownerId:currentUserId
         });
+        allTasksArr = [];
+        clearTableRows();
+        getMyTasks();
     };
 
     var allTasksArr = [];
@@ -189,7 +193,7 @@
         const element = allTasksArr[index];
         let row = tbl.insertRow(-1);
 
-        for (let colIndex = 0; colIndex < 9; colIndex++) {
+        for (let colIndex = 0; colIndex < 10; colIndex++) {
           var cell = row.insertCell(-1);
           switch (colIndex) {
             case 0:
@@ -222,10 +226,7 @@
               checkbox.name = "name";
               checkbox.value = "value";
               checkbox.id = "checkBox" + element.id;
-              checkbox.onclick = function () {
-                // set that this task is completed in db
-                updateTaskStatus(checkbox.checked ? 1 : 0, element.id);
-              };
+              checkbox.disabled = true;
               if (element.status == 1) {
                 checkbox.checked = true;
               } else {
@@ -240,6 +241,10 @@
                     cell.innerHTML = "TBD";
                 }
               break;
+            case 9:
+              let userEndDate = getDisplayableDateFromTimestamp(element.userEndDate);
+              cell.innerHTML = userEndDate.includes("NaN") ? "" : userEndDate
+              break;
             default:
               break;
           }
@@ -249,8 +254,17 @@
 
     function getDisplayableDateFromTimestamp(param) {
       var date = new Date(param);
-      return date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
+      return date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear();
     }
+
+    function clearTableRows() {
+            let tbl = document.getElementById("userTasks");
+
+            var rowCount = tbl.rows.length;
+            for (var i = rowCount - 1; i > 0; i--) {
+                tbl.deleteRow(i);
+            }
+        }
 
       </script>
       <footer>
