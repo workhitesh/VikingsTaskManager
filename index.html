@@ -2,98 +2,151 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+    integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
+
+  <title>Task Manager</title>
+  <link rel="stylesheet" href="homepage1.css" />
 </head>
 
 <body>
-    <div id="webapp">
-        <div id="div">
-            <label for="emailLogin">Email</label>
-            <input type="email" name="emailLogin" id="emailInput">
-            <label for="password">Password</label>
-            <input type="password" name="password" id="passwordInput">
-            <div id="toggle">
-                <span>Admin: </span><label class="switch">
-                    <input type="checkbox" checked id="toggleswitch">
-                    <span class="slider round"></span>
-                </label>
-
-            </div>
-            <button id="loginBtn">Login</button>
-        </div>
-       
+  <header class="home-container">
+    <div class="gun">
+      <div class="headerdiv1">
+        <img src="images/output-onlinepngtools.png" alt="Logo Image" class="headerlogo" height="96px" width="auto">
+      </div>
+      <div class="headerdiv2">
+        <a href="index.html">
+          <h1 class="logo"> <span class="text-primary">
+              <!--<i class="fab fa-btc"></i>--> Task
+            </span>Manager </h1>
+        </a>
+      </div>
     </div>
 
-    <script type="module">
+    <div class="navbar">
 
-        import { initializeApp } from
-         'https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js'
-    
-        // Add Firebase products that you want to use
-        import { getFirestore, collection, addDoc, getDocs, 
-            updateDoc, doc , where, query } from
-             'https://www.gstatic.com/firebasejs/9.8.3/firebase-firestore.js'
-    
-        const firebaseConfig = {
-          apiKey: "AIzaSyCfLAML4A9M5yBf5LyH14mWYBU62y6SLcA",
-          authDomain: "vikingstaskmanager.firebaseapp.com",
-          projectId: "vikingstaskmanager",
-          storageBucket: "vikingstaskmanager.appspot.com",
-          messagingSenderId: "282303572666",
-          appId: "1:282303572666:web:16bdd6315143d148aab083",
-          measurementId: "G-L0BDK31DL6",
-        };
-    
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const database = getFirestore(app);
-        
-        async function checkLogin(email, pwd, isAdmin) {
-                const q1 = query(collection(database, "users"), where("email", "==", email));
+      <!-- <ul>
+              <a href="#">
+                <li> Home </li>
+              </a>
+              <a>
+                <li> About Us</li>
+              </a>
+              <a>
+                <li> Contact Us</li>
+              </a>
+              <a>
+                <li> Login </li>
+              </a>
+              <a>
+                <li> Register</li>
+              </a> -->
+    </div>
+  </header>
+  <div id="webappDas">
+    <div id="userpanel">
+      <h1 id="pageHeading">User Panel</h1>
+    </div>
 
-                const querySnapshot = await getDocs(q1);
-                var emailFound = false;
-                var isAlertShown = false;
-                var userId = '';
-                querySnapshot.forEach((doc) => {
-                    if (doc.data()["email"] == email && doc.data()["password"] == pwd) {
-                        emailFound = true;
-                        userId = doc.id;
-                        if (isAdmin) {
-                            if (doc.data()["isAdmin"] == false) {
-                                emailFound = false;
-                                isAlertShown = true;
-                                alert("It seems you are not an admin.");
-                            }
-                        }
-                    }
-                });
-                if (emailFound == false && isAlertShown == false) {
-                    alert("Invalid credentials or user not found");
-                } else if (emailFound == true) {
-                    // navigate to admin/user dashboard
-                    if (isAdmin) {
-                        window.location.href = 'admin.html?' + userId;
-                    } else {
-                        window.location.href = 'index.html?' + userId;
-                    }
+    <div style="margin-top: 50px;">
+      <table id="userTasks">
+        <thead>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>start date</th>
+          <th>End date</th>
+          <th>Hourly Rate</th>
+          <th>Total hours</th>
+          <th>Status</th>
+          <th>Hours Worked</th>
+          <th></th>
+        </thead>
+        <tbody>
+          <!-- <tr>
+                            <td>1</td>
+                            <td>Task1</td>
+                            <td> Description</td>
+                            <td>08 june </td>
+                            <td>10 july</td>
+                            <td>1</td>
+                            <td>Task1</td>
+                            <td> Description</td>
+                            <td>08 june </td>
+                        </tr> -->
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+  </div>
+
+  <script type="module">
+
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js'
+
+    // Add Firebase products that you want to use
+    import { getFirestore, collection, addDoc, getDocs, updateDoc, doc } from 'https://www.gstatic.com/firebasejs/9.8.3/firebase-firestore.js'
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCfLAML4A9M5yBf5LyH14mWYBU62y6SLcA",
+      authDomain: "vikingstaskmanager.firebaseapp.com",
+      projectId: "vikingstaskmanager",
+      storageBucket: "vikingstaskmanager.appspot.com",
+      messagingSenderId: "282303572666",
+      appId: "1:282303572666:web:16bdd6315143d148aab083",
+      measurementId: "G-L0BDK31DL6",
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getFirestore(app);
+
+    let currentUserId = location.search.substring(1);
+
+    getMyTasks();
+
+    async function getMyTasks() {
+            const qA = await getDocs(collection(database, "tasks"));
+            qA.forEach((element) => {
+                let task = new Object();
+                task.name = element.data().name;
+                task.description = element.data().description;
+                task.endDate = element.data().endDate;
+                task.hourlyRate = element.data().hourlyRate;
+                task.id = element.id;
+                task.startDate = element.data().startDate;
+                task.status = element.data().status;
+                task.totalHours = element.data().totalHours;
+                if (element.data()["assignedUserId"] == currentUserId) {
+                  allTasksArr.push(task);
                 }
+            });
+            setDataInTable();
+    }
 
-            }
+    async function updateTaskStatus(isDone, taskId) {
+            const dbRef = doc(database, "tasks", taskId);
+            await updateDoc(dbRef, {
+                status: isDone,
+                userEndDate: isDone ? Date.now():1
+            });
+        }
 
-            let loginBtn = document.getElementById('loginBtn');
-            loginBtn.onclick = function(){
-                let email = document.getElementById('emailInput').value;
-                let pwd = document.getElementById('passwordInput').value;
-                let isAdmin = document.getElementById('toggleswitch').checked;
-                checkLogin(email,pwd,isAdmin); 
-            };
+    async function updateTaskHrs(taskId, newHrs) {
+            const dbRef = doc(database, "tasks", taskId);
+            await updateDoc(dbRef, {
+                totalHours: newHrs
+            });
+        }
 
-      </script>
+    var allTasksArr = [];
 
     function setDataInTable() {
       let tbl = document.getElementById("userTasks");

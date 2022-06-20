@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="webapp">
+        <div id="div">
+            <label for="emailLogin">Email</label>
+            <input type="email" name="emailLogin" id="emailInput">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="passwordInput">
+            <div id="toggle">
+                <span>Admin: </span><label class="switch">
+                    <input type="checkbox" checked id="toggleswitch">
+                    <span class="slider round"></span>
+                </label>
+
+            </div>
+            <button id="loginBtn">Login</button>
+        </div>
+       
+    </div>
+
+    <script type="module">
+
+        import { initializeApp } from
+         'https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js'
+    
+        // Add Firebase products that you want to use
+        import { getFirestore, collection, addDoc, getDocs, 
+            updateDoc, doc , where, query } from
+             'https://www.gstatic.com/firebasejs/9.8.3/firebase-firestore.js'
+    
+        const firebaseConfig = {
+          apiKey: "AIzaSyCfLAML4A9M5yBf5LyH14mWYBU62y6SLcA",
+          authDomain: "vikingstaskmanager.firebaseapp.com",
+          projectId: "vikingstaskmanager",
+          storageBucket: "vikingstaskmanager.appspot.com",
+          messagingSenderId: "282303572666",
+          appId: "1:282303572666:web:16bdd6315143d148aab083",
+          measurementId: "G-L0BDK31DL6",
+        };
+    
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getFirestore(app);
+        
+        async function checkLogin(email, pwd, isAdmin) {
+                const q1 = query(collection(database, "users"), where("email", "==", email));
+
+                const querySnapshot = await getDocs(q1);
+                var emailFound = false;
+                var isAlertShown = false;
+                var userId = '';
+                querySnapshot.forEach((doc) => {
+                    if (doc.data()["email"] == email && doc.data()["password"] == pwd) {
+                        emailFound = true;
+                        userId = doc.id;
+                        if (isAdmin) {
+                            if (doc.data()["isAdmin"] == false) {
+                                emailFound = false;
+                                isAlertShown = true;
+                                alert("It seems you are not an admin.");
+                            }
+                        }
+                    }
+                });
+                if (emailFound == false && isAlertShown == false) {
+                    alert("Invalid credentials or user not found");
+                } else if (emailFound == true) {
+                    // navigate to admin/user dashboard
+                    if (isAdmin) {
+                        window.location.href = 'admin.html?' + userId;
+                    } else {
+                        window.location.href = 'index.html?' + userId;
+                    }
+                }
+
+            }
+
+            let loginBtn = document.getElementById('loginBtn');
+            loginBtn.onclick = function(){
+                let email = document.getElementById('emailInput').value;
+                let pwd = document.getElementById('passwordInput').value;
+                let isAdmin = document.getElementById('toggleswitch').checked;
+                checkLogin(email,pwd,isAdmin); 
+            };
+
+      </script>
+
+</body>
+
+</html>

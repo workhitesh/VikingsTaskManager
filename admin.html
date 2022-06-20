@@ -35,7 +35,6 @@
     <div id="webappDas">
         <div id="adminpanel">
             <h1 id="pageHeading">Admin Panel</h1>
-            <button id="showcreateTask" >Create Task</button>
 
             <div id="taskCreate">
                 <br>
@@ -111,9 +110,6 @@
         var allUsersArr = [];
         getAllUsers();
 
-
-
-
         getMyTasks();
     
         async function getMyTasks() {
@@ -159,29 +155,6 @@
             dropDown.add(option);
         }
     };
-
-    let taskCreate = document.getElementById("taskCreate");
-    let showcttask = false
-    console.log(taskCreate);
-    taskCreate.style.display = 'none';
-
-    let showcreateTask = document.getElementById('showcreateTask');
-    showcreateTask.onclick = function () {
-      if(showcttask){
-        taskCreate.style.display = 'none';
-        showcreateTask.innerText = 'Create Task'
-        showcttask = false
-
-
-      }else{
-        taskCreate.style.display = 'flex';
-        showcreateTask.innerText = 'back';
-        showcttask = true
-
-      }
-
-    }
-
 
     let btnCreateTask = document.getElementById('btnCreateTask');
     btnCreateTask.onclick = async function(){
