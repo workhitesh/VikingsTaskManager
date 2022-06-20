@@ -274,7 +274,7 @@ h1 {
 } */
 
 /*Table css*/
-#userTasks,
+table,
 th,
 td {
     margin: auto;
@@ -307,6 +307,18 @@ td {
 }
 
 #userpanel h1 {
+    border-bottom: 4px solid #E9D5CA;
+    margin: unset;
+    padding: 1rem 0px;
+}
+
+#adminpanel {
+    display: flex;
+    flex-direction: column;
+
+}
+
+#adminpanel h1 {
     border-bottom: 4px solid #E9D5CA;
     margin: unset;
     padding: 1rem 0px;
