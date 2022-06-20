@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+    integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
+
+  <title>Task Manager</title>
+  <link rel="stylesheet" href="homepage1.css" />
+</head>
+
+<body>
+  <header class="home-container">
+    <div class="gun">
+      <div class="headerdiv1">
+        <img src="images/output-onlinepngtools.png" alt="Logo Image" class="headerlogo" height="96px" width="auto">
+      </div>
+      <div class="headerdiv2">
+        <a href="index.html">
+          <h1 class="logo"> <span class="text-primary">
+              <!--<i class="fab fa-btc"></i>--> Task
+            </span>Manager </h1>
+        </a>
+      </div>
+    </div>
+
+    <div class="navbar">
+
+      <!-- <ul>
+              <a href="#">
+                <li> Home </li>
+              </a>
+              <a>
+                <li> About Us</li>
+              </a>
+              <a>
+                <li> Contact Us</li>
+              </a>
+              <a>
+                <li> Login </li>
+              </a>
+              <a>
+                <li> Register</li>
+              </a> -->
+    </div>
+  </header>
+  <div id="webappDas">
+    <div id="userpanel">
+      <h1 id="pageHeading">User Panel</h1>
+    </div>
+
+    <div style="margin-top: 50px;">
+      <table id="userTasks">
+        <thead>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>start date</th>
+          <th>End date</th>
+          <th>Hourly Rate</th>
+          <th>Total hours</th>
+          <th>Status</th>
+          <th>Hours Worked</th>
+          <th></th>
+        </thead>
+        <tbody>
+          <!-- <tr>
+                            <td>1</td>
+                            <td>Task1</td>
+                            <td> Description</td>
+                            <td>08 june </td>
+                            <td>10 july</td>
+                            <td>1</td>
+                            <td>Task1</td>
+                            <td> Description</td>
+                            <td>08 june </td>
+                        </tr> -->
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+  </div>
+
+  <script type="module">
+
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js'
+
+    // Add Firebase products that you want to use
+    import { getFirestore, collection, addDoc, getDocs, updateDoc, doc } from 'https://www.gstatic.com/firebasejs/9.8.3/firebase-firestore.js'
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCfLAML4A9M5yBf5LyH14mWYBU62y6SLcA",
+      authDomain: "vikingstaskmanager.firebaseapp.com",
+      projectId: "vikingstaskmanager",
+      storageBucket: "vikingstaskmanager.appspot.com",
+      messagingSenderId: "282303572666",
+      appId: "1:282303572666:web:16bdd6315143d148aab083",
+      measurementId: "G-L0BDK31DL6",
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getFirestore(app);
+
+    let currentUserId = location.search.substring(1);
+
+    getMyTasks();
+
+    async function getMyTasks() {
+            const qA = await getDocs(collection(database, "tasks"));
+            qA.forEach((element) => {
+                let task = new Object();
+                task.name = element.data().name;
+                task.description = element.data().description;
+                task.endDate = element.data().endDate;
+                task.hourlyRate = element.data().hourlyRate;
+                task.id = element.id;
+                task.startDate = element.data().startDate;
+                task.status = element.data().status;
+                task.totalHours = element.data().totalHours;
+                if (element.data()["assignedUserId"] == currentUserId) {
+                  allTasksArr.push(task);
+                }
+            });
+            setDataInTable();
+    }
+
+    async function updateTaskStatus(isDone, taskId) {
+            const dbRef = doc(database, "tasks", taskId);
+            await updateDoc(dbRef, {
+                status: isDone,
+                userEndDate: isDone ? Date.now():1
+            });
+        }
+
+    async function updateTaskHrs(taskId, newHrs) {
+            const dbRef = doc(database, "tasks", taskId);
+            await updateDoc(dbRef, {
+                totalHours: newHrs
+            });
+        }
+
+    var allTasksArr = [];
+
+    function setDataInTable() {
+      let tbl = document.getElementById("userTasks");
+      for (let index = 0; index < allTasksArr.length; index++) {
+        const element = allTasksArr[index];
+        let row = tbl.insertRow(-1);
+
+        for (let colIndex = 0; colIndex < 10; colIndex++) {
+          var cell = row.insertCell(-1);
+          switch (colIndex) {
+            case 0:
+              cell.innerHTML = element.id;
+              break;
+            case 1:
+              cell.innerHTML = element.name;
+              break;
+            case 2:
+              cell.innerHTML = element.description;
+              break;
+            case 3:
+              let startDate = getDisplayableDateFromTimestamp(element.startDate);
+              cell.innerHTML = startDate.includes("NaN") ? "" : startDate
+              break;
+            case 4:
+              let endDate = getDisplayableDateFromTimestamp(element.endDate);
+              cell.innerHTML = endDate.includes("NaN") ? "" : endDate
+              break;
+            case 5:
+              cell.innerHTML = element.hourlyRate;
+              break;
+            case 6:
+              cell.innerHTML = element.totalHours;
+              cell.id = 'cell' + element.id;
+              break;
+            case 7:
+              var checkbox = document.createElement('input');
+              checkbox.type = "checkbox";
+              checkbox.name = "name";
+              checkbox.value = "value";
+              checkbox.id = "checkBox" + element.id;
+              checkbox.onclick = function () {
+                // set that this task is completed in db
+                updateTaskStatus(checkbox.checked ? 1 : 0, element.id);
+              };
+              if (element.status == 1) {
+                checkbox.checked = true;
+              } else {
+                checkbox.checked = false;
+              }
+              cell.appendChild(checkbox);
+              break;
+            case 8:
+              var txtArea = document.createElement('input');
+              txtArea.type = "textarea";
+              txtArea.name = "hrsWorked";
+              txtArea.id = "txt" + element.id;
+              cell.appendChild(txtArea);
+              break;
+            case 9:
+              const btn = document.createElement("button");
+              btn.innerHTML = "Add";
+              btn.id = 'btn' + element.id;
+              btn.onclick = function(){
+                var existingHrs = element.totalHours;
+                let txt = document.getElementById("txt" + element.id);
+                let addedTxt = txt.value;
+                existingHrs += parseInt(addedTxt,10);
+                let newHrs = existingHrs;
+                updateTaskHrs(element.id,newHrs);
+                let cell = document.getElementById("cell" + element.id);
+                cell.innerHTML = newHrs;
+              };
+              cell.appendChild(btn);
+              break;
+            default:
+              break;
+          }
+        }
+      }
+    }
+
+    function getDisplayableDateFromTimestamp(param) {
+      var date = new Date(param);
+      return date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear();
+    }
+
+
+  </script>
+  <footer>
+    <div class="social">
+      <a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+      <a href="https://www.twitter.com/" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
+      <a href="https://www.youtube.com/" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+      <a href="https://www.linkedin.com/in/" target="_blank"><i class="fab fa-linkedin fa-2x"></i></a>
+    </div>
+    <p class="footer-content">
+      &copy; Copyright 2022. All Rights reserved - Vikings MADT
+    </p>
+  </footer>
+</body>
+
+</html>
