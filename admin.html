@@ -7,9 +7,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+    integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="homepage1.css" />
 </head>
 
 <body>
+
+    <header class="home-container">
+        <div class="gun">
+          <div class="headerdiv1">
+            <img src="images/output-onlinepngtools.png" alt="Logo Image" class="headerlogo" height="96px" width="auto">
+          </div>
+          <div class="headerdiv2">
+            <a href="index.html">
+              <h1 class="logo"> <span class="text-primary">
+                  <!--<i class="fab fa-btc"></i>--> Task
+                </span>Manager </h1>
+            </a>
+          </div>
+        </div>
+    
+        <div class="navbar">
+        </div>
+      </header>
 
     <div id="webappDas">
         <div id="adminpanel">
@@ -35,23 +56,25 @@
                 <button id="btnCreateTask">Create Task</button>
             </div>
 
-            <div style="margin-top: 50px;"">
-                <table>
-                    <thead>
-                        <th>Task Name</th>
-                        <th>Task Description</th>
-                        <th>Task start date</th>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Task1</td>
-                            <td> Description</td>
-                            <td>08 june </td>
-                        </tr>
-                    </tbody>
-                    
+            <div style="margin-top: 50px;">
+                <table id="userTasks">
+                  <thead>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Start date</th>
+                    <th>End date</th>
+                    <th>Hourly Rate</th>
+                    <th>Total hours</th>
+                    <th>Status</th>
+                    <th>Total Cost</th>
+                  </thead>
+                  <tbody>
+                   
+                  </tbody>
+          
                 </table>
-            </div>
+              </div>
         </div>
     </div>
 
@@ -82,6 +105,25 @@
 
         var allUsersArr = [];
         getAllUsers();
+
+        getMyTasks();
+    
+        async function getMyTasks() {
+                const qA = await getDocs(collection(database, "tasks"));
+                qA.forEach((element) => {
+                    let task = new Object();
+                    task.name = element.data().name;
+                    task.description = element.data().description;
+                    task.endDate = element.data().endDate;
+                    task.hourlyRate = element.data().hourlyRate;
+                    task.id = element.id;
+                    task.startDate = element.data().startDate;
+                    task.status = element.data().status;
+                    task.totalHours = element.data().totalHours;
+                    allTasksArr.push(task);
+                });
+                setDataInTable();
+        }
         
         async function getAllUsers() {
             const qA = await getDocs(collection(database, "users"));
@@ -133,7 +175,90 @@
         });
     };
 
+    var allTasksArr = [];
+
+    
+    function setDataInTable() {
+      let tbl = document.getElementById("userTasks");
+      for (let index = 0; index < allTasksArr.length; index++) {
+        const element = allTasksArr[index];
+        let row = tbl.insertRow(-1);
+
+        for (let colIndex = 0; colIndex < 9; colIndex++) {
+          var cell = row.insertCell(-1);
+          switch (colIndex) {
+            case 0:
+              cell.innerHTML = element.id;
+              break;
+            case 1:
+              cell.innerHTML = element.name;
+              break;
+            case 2:
+              cell.innerHTML = element.description;
+              break;
+            case 3:
+              let startDate = getDisplayableDateFromTimestamp(element.startDate);
+              cell.innerHTML = startDate.includes("NaN") ? "" : startDate
+              break;
+            case 4:
+              let endDate = getDisplayableDateFromTimestamp(element.endDate);
+              cell.innerHTML = endDate.includes("NaN") ? "" : endDate
+              break;
+            case 5:
+              cell.innerHTML = element.hourlyRate;
+              break;
+            case 6:
+              cell.innerHTML = element.totalHours;
+            //   cell.id = 'cell' + element.id;
+              break;
+            case 7:
+              var checkbox = document.createElement('input');
+              checkbox.type = "checkbox";
+              checkbox.name = "name";
+              checkbox.value = "value";
+              checkbox.id = "checkBox" + element.id;
+              checkbox.onclick = function () {
+                // set that this task is completed in db
+                updateTaskStatus(checkbox.checked ? 1 : 0, element.id);
+              };
+              if (element.status == 1) {
+                checkbox.checked = true;
+              } else {
+                checkbox.checked = false;
+              }
+              cell.appendChild(checkbox);
+              break;
+            case 8:
+                if(element.status == 1) {
+                    cell.innerHTML = (element.hourlyRate * element.totalHours) + " CAD";
+                } else {
+                    cell.innerHTML = "TBD";
+                }
+              break;
+            default:
+              break;
+          }
+        }
+      }
+    }
+
+    function getDisplayableDateFromTimestamp(param) {
+      var date = new Date(param);
+      return date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
+    }
+
       </script>
+      <footer>
+        <div class="social">
+          <a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+          <a href="https://www.twitter.com/" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
+          <a href="https://www.youtube.com/" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+          <a href="https://www.linkedin.com/in/" target="_blank"><i class="fab fa-linkedin fa-2x"></i></a>
+        </div>
+        <p class="footer-content">
+          &copy; Copyright 2022. All Rights reserved - Vikings MADT
+        </p>
+      </footer>
 
 </body>
 
