@@ -11,8 +11,6 @@
 
 <body>
 
-
-    </div>
     <div id="webappDas">
         <div id="adminpanel">
             <h1>Admin Panel</h1>
@@ -29,9 +27,6 @@
                 <label for="cars">Choose a user:</label>
 
                 <select name="users" id="users">
-                    <option value="volvo">Hitesh</option>
-                    <option value="saab">Ritraj</option>
-                    <option value="mercedes">Sunny</option>
                 </select><br>
 
                 <label for="hrRate">Hourly Rate</label>
@@ -59,6 +54,87 @@
             </div>
         </div>
     </div>
+
+
+    <script type="module">
+
+        import { initializeApp } from
+         'https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js'
+    
+        // Add Firebase products that you want to use
+        import { getFirestore, collection, addDoc, getDocs, 
+            updateDoc, doc , where, query } from
+             'https://www.gstatic.com/firebasejs/9.8.3/firebase-firestore.js'
+    
+        const firebaseConfig = {
+          apiKey: "AIzaSyCfLAML4A9M5yBf5LyH14mWYBU62y6SLcA",
+          authDomain: "vikingstaskmanager.firebaseapp.com",
+          projectId: "vikingstaskmanager",
+          storageBucket: "vikingstaskmanager.appspot.com",
+          messagingSenderId: "282303572666",
+          appId: "1:282303572666:web:16bdd6315143d148aab083",
+          measurementId: "G-L0BDK31DL6",
+        };
+    
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getFirestore(app);
+
+        var allUsersArr = [];
+        getAllUsers();
+        
+        async function getAllUsers() {
+            const qA = await getDocs(collection(database, "users"));
+            qA.forEach((element) => {
+                let user = new Object();
+                user.id = element.id;
+                user.email = element.data()["email"];
+                if (element.data()["isAdmin"] == false) {
+                    allUsersArr.push(user);
+                }
+            });
+            updateDropDownOptions();
+    }
+
+    let dropDown = document.getElementById('users');
+
+    function updateDropDownOptions(){
+        for (let index = 0; index < allUsersArr.length; index++) {
+            const element = allUsersArr[index];
+            var option = document.createElement("option");
+            option.text = element.email;
+            dropDown.add(option);
+        }
+    };
+
+    let btnCreateTask = document.getElementById('btnCreateTask');
+    btnCreateTask.onclick = async function(){
+        let name = document.getElementById('taskNameid').value;
+        let description = document.getElementById('taskDescription').value;
+        let startDate = document.getElementById('startDateid').value;
+        let endDate = document.getElementById('endDateid').value;
+        let userId = allUsersArr[dropDown.selectedIndex].id;
+        let hrlyRate = document.getElementById('hrRate').value; 
+        let status = 0;
+        let totalHours = 0;
+
+        // create task
+        // Add a new document with a generated id.
+        const docRef = await addDoc(collection(database, "tasks"), {
+            description: description,
+            name:name,
+            startDate:Date.parse(startDate),
+            endDate:Date.parse(endDate),
+            assignedUserId:userId,
+            hourlyRate:parseInt(hrlyRate,10),
+            status:status,
+            totalHours:totalHours,
+            ownerId:""
+        });
+    };
+
+      </script>
+
 </body>
 
 </html>
