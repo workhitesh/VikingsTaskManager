@@ -208,6 +208,11 @@
             case 9:
               const btn = document.createElement("button");
               btn.innerHTML = "Add";
+              if (element.status == 1) {
+                btn.style.display = 'none';
+              } else {
+                btn.style.display = 'block';
+              }
               btn.id = 'btn' + element.id;
               btn.onclick = function(){
                 var existingHrs = element.totalHours;
