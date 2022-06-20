@@ -95,6 +95,105 @@
 
       </script>
 
+    function setDataInTable() {
+      let tbl = document.getElementById("userTasks");
+      for (let index = 0; index < allTasksArr.length; index++) {
+        const element = allTasksArr[index];
+        let row = tbl.insertRow(-1);
+
+        for (let colIndex = 0; colIndex < 10; colIndex++) {
+          var cell = row.insertCell(-1);
+          switch (colIndex) {
+            case 0:
+              cell.innerHTML = element.id;
+              break;
+            case 1:
+              cell.innerHTML = element.name;
+              break;
+            case 2:
+              cell.innerHTML = element.description;
+              break;
+            case 3:
+              let startDate = getDisplayableDateFromTimestamp(element.startDate);
+              cell.innerHTML = startDate.includes("NaN") ? "" : startDate
+              break;
+            case 4:
+              let endDate = getDisplayableDateFromTimestamp(element.endDate);
+              cell.innerHTML = endDate.includes("NaN") ? "" : endDate
+              break;
+            case 5:
+              cell.innerHTML = element.hourlyRate;
+              break;
+            case 6:
+              cell.innerHTML = element.totalHours;
+              cell.id = 'cell' + element.id;
+              break;
+            case 7:
+              var checkbox = document.createElement('input');
+              checkbox.type = "checkbox";
+              checkbox.name = "name";
+              checkbox.value = "value";
+              checkbox.id = "checkBox" + element.id;
+              checkbox.onclick = function () {
+                // set that this task is completed in db
+                updateTaskStatus(checkbox.checked ? 1 : 0, element.id);
+              };
+              if (element.status == 1) {
+                checkbox.checked = true;
+              } else {
+                checkbox.checked = false;
+              }
+              cell.appendChild(checkbox);
+              break;
+            case 8:
+              var txtArea = document.createElement('input');
+              txtArea.type = "textarea";
+              txtArea.name = "hrsWorked";
+              txtArea.id = "txt" + element.id;
+              cell.appendChild(txtArea);
+              break;
+            case 9:
+              const btn = document.createElement("button");
+              btn.innerHTML = "Add";
+              btn.id = 'btn' + element.id;
+              btn.onclick = function(){
+                var existingHrs = element.totalHours;
+                let txt = document.getElementById("txt" + element.id);
+                let addedTxt = txt.value;
+                existingHrs += parseInt(addedTxt,10);
+                let newHrs = existingHrs;
+                element.totalHours = newHrs;
+                updateTaskHrs(element.id,newHrs);
+                let cell = document.getElementById("cell" + element.id);
+                cell.innerHTML = newHrs;
+              };
+              cell.appendChild(btn);
+              break;
+            default:
+              break;
+          }
+        }
+      }
+    }
+
+    function getDisplayableDateFromTimestamp(param) {
+      var date = new Date(param);
+      return date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear();
+    }
+
+
+  </script>
+  <footer>
+    <div class="social">
+      <a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook fa-2x"></i></a>
+      <a href="https://www.twitter.com/" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
+      <a href="https://www.youtube.com/" target="_blank"><i class="fab fa-youtube fa-2x"></i></a>
+      <a href="https://www.linkedin.com/in/" target="_blank"><i class="fab fa-linkedin fa-2x"></i></a>
+    </div>
+    <p class="footer-content">
+      &copy; Copyright 2022. All Rights reserved - Vikings MADT
+    </p>
+  </footer>
 </body>
 
 </html>
