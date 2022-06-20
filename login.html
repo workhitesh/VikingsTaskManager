@@ -57,22 +57,24 @@
 
                 const querySnapshot = await getDocs(q1);
                 var emailFound = false;
+                var isAlertShown = false;
                 querySnapshot.forEach((doc) => {
                     if (doc.data()["email"] == email && doc.data()["password"] == pwd) {
                         emailFound = true;
                         if (isAdmin) {
                             if (doc.data()["isAdmin"] == false) {
                                 emailFound = false;
+                                isAlertShown = true;
                                 alert("It seems you are not an admin.");
                             }
                         }
                     }
                 });
-                if (emailFound == false) {
+                if (emailFound == false && isAlertShown == false) {
                     alert("Invalid credentials or user not found");
                 } else {
                     // navigate to admin/user dashboard
-                    
+
                 }
 
             }
