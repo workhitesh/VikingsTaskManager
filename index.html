@@ -215,6 +215,7 @@
                 let addedTxt = txt.value;
                 existingHrs += parseInt(addedTxt,10);
                 let newHrs = existingHrs;
+                element.totalHours = newHrs;
                 updateTaskHrs(element.id,newHrs);
                 let cell = document.getElementById("cell" + element.id);
                 cell.innerHTML = newHrs;
