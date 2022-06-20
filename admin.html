@@ -103,12 +103,15 @@
         const app = initializeApp(firebaseConfig);
         const database = getFirestore(app);
 
+        let currentUserId = location.search.substring(1);
+
         var allUsersArr = [];
         getAllUsers();
 
         getMyTasks();
     
         async function getMyTasks() {
+            console.log(currentUserId);
                 const qA = await getDocs(collection(database, "tasks"));
                 qA.forEach((element) => {
                     let task = new Object();
@@ -120,7 +123,9 @@
                     task.startDate = element.data().startDate;
                     task.status = element.data().status;
                     task.totalHours = element.data().totalHours;
-                    allTasksArr.push(task);
+                    if (element.data()["ownerId"] == currentUserId) {
+                        allTasksArr.push(task);
+                    }
                 });
                 setDataInTable();
         }
